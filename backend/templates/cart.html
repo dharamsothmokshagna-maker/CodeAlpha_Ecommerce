@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+<nav>
+    <h2>CodeAlpha Store</h2>
+
+    <ul>
+        <li><a href="/">Home</a></li>
+    </ul>
+</nav>
+
+<div class="cart-page">
+
+    <h1>Shopping Cart 🛒</h1>
+
+    <table>
+
+        <tr>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Total</th>
+        </tr>
+
+        {% for item in cart_items %}
+        <tr>
+            <td>{{ item.product.name }}</td>
+            <td>₹{{ item.product.price }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>₹{{ item.product.price }}</td>
+        </tr>
+        {% endfor %}
+
+    </table>
+
+    <h2>Grand Total : ₹{{ total }}</h2>
+
+    <a href="/checkout/">
+    <button>Proceed to Checkout</button>
+</a>
+
+</div>
+
+</body>
+</html>

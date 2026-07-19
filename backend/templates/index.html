@@ -1,0 +1,52 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeAlpha Store</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+    <nav>
+        <h2>CodeAlpha Store</h2>
+
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Products</a></li>
+            <li><a href="/cart/">Cart 🛒 (<span class="cart-count">0</span>)</a></li>
+            <li><a href="/login/">Login</a></li>
+        </ul>
+    </nav>
+
+    <section class="hero">
+        <h1>Welcome to CodeAlpha Store</h1>
+        <p>Buy the latest products at the best prices.</p>
+    </section>
+
+    <section class="products">
+
+    {% for product in products %}
+    <div class="card">
+        <a href="/product/">
+            <img src="{% static 'images/' %}{{ product.image }}" alt="{{ product.name }}">
+        </a>
+
+        <h3>
+            <a href="/product/">{{ product.name }}</a>
+        </h3>
+
+        <p>₹{{ product.price }}</p>
+
+        <a href="{% url 'add_to_cart' product.id %}">
+            <button>Add to Cart</button>
+        </a>
+    </div>
+    {% endfor %}
+
+</section>
+    <script src="{% static 'js/script.js' %}"></script>
+
+</body>
+</html>
