@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SocialConnect - Home</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+        }
+
+        nav {
+            background-color: #1877f2;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        nav h2 {
+            margin: 0;
+            margin-right: auto;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 30px auto;
+            padding: 0 15px;
+        }
+
+        .welcome {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .create-post {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .create-post a {
+            display: inline-block;
+            background-color: #1877f2;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .create-post a:hover {
+            background-color: #0d65d9;
+        }
+
+        .post {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .post-header {
+            margin-bottom: 15px;
+        }
+
+        .post-header a {
+            color: #1877f2;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .post-content {
+            font-size: 18px;
+            margin: 15px 0;
+            word-wrap: break-word;
+        }
+
+        .post-date {
+            color: #888;
+            font-size: 13px;
+        }
+
+        .like-section {
+            margin-top: 15px;
+        }
+
+        .like-button {
+            background-color: #1877f2;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .like-button:hover {
+            background-color: #0d65d9;
+        }
+
+        .comments {
+            margin-top: 20px;
+            border-top: 1px solid #ddd;
+            padding-top: 15px;
+        }
+
+        .comment {
+            background-color: #f5f5f5;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 5px;
+        }
+
+        .comment strong {
+            color: #1877f2;
+        }
+
+        .comment-form {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .comment-form input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .comment-form button {
+            background-color: #1877f2;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .no-posts {
+            background-color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 10px;
+            color: #777;
+        }
+    </style>
+</head>
+
+<body>
+
+<nav>
+
+    <h2>SocialConnect</h2>
+
+    <a href="/social/">
+        Home
+    </a>
+
+    {% if user.is_authenticated %}
+
+        <a href="/social/profile/{{ user.username }}/">
+            My Profile
+        </a>
+
+        <a href="/social/create-post/">
+            Create Post
+        </a>
+
+        <a href="/social/logout/">
+            Logout
+        </a>
+
+    {% else %}
+
+        <a href="/social/login/">
+            Login
+        </a>
+
+        <a href="/social/register/">
+            Register
+        </a>
+
+    {% endif %}
+
+</nav>
+
+
+<div class="container">
+
+
+    {% if user.is_authenticated %}
+
+        <div class="welcome">
+
+            <h2>
+                Welcome, {{ user.username }}! 👋
+            </h2>
+
+            <p>
+                Share your thoughts and connect with others.
+            </p>
+
+        </div>
+
+
+        <div class="create-post">
+
+            <h3>
+                What's on your mind?
+            </h3>
+
+            <a href="/social/create-post/">
+                Create a New Post
+            </a>
+
+        </div>
+
+    {% else %}
+
+        <div class="welcome">
+
+            <h2>
+                Welcome to SocialConnect
+            </h2>
+
+            <p>
+                Login or register to connect with the community.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+
+    <h2>
+        Social Feed
+    </h2>
+
+
+    {% for post in posts %}
+
+        <div class="post">
+
+
+            <div class="post-header">
+
+                <a href="/social/profile/{{ post.user.username }}/">
+
+                    @{{ post.user.username }}
+
+                </a>
+
+            </div>
+
+
+            <div class="post-content">
+
+                {{ post.content }}
+
+            </div>
+
+
+            <div class="post-date">
+
+                Posted on {{ post.created_at }}
+
+            </div>
+
+
+            <!-- Like Section -->
+
+            <div class="like-section">
+
+                <span>
+                    ❤️ {{ post.likes.count }} Likes
+                </span>
+
+                {% if user.is_authenticated %}
+
+                    <form
+                        method="POST"
+                        action="/social/like/{{ post.id }}/"
+                        style="display: inline;"
+                    >
+
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            class="like-button"
+                        >
+                            Like / Unlike
+                        </button>
+
+                    </form>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- Comments -->
+
+            <div class="comments">
+
+                <h3>
+                    Comments
+                </h3>
+
+
+                {% for comment in post.comments.all %}
+
+                    <div class="comment">
+
+                        <strong>
+                            @{{ comment.user.username }}
+                        </strong>
+
+                        {{ comment.content }}
+
+                    </div>
+
+                {% empty %}
+
+                    <p>
+                        No comments yet.
+                    </p>
+
+                {% endfor %}
+
+
+                {% if user.is_authenticated %}
+
+                    <form
+                        method="POST"
+                        action="/social/comment/{{ post.id }}/"
+                        class="comment-form"
+                    >
+
+                        {% csrf_token %}
+
+                        <input
+                            type="text"
+                            name="content"
+                            placeholder="Write a comment..."
+                            required
+                        >
+
+                        <button type="submit">
+                            Comment
+                        </button>
+
+                    </form>
+
+                {% endif %}
+
+            </div>
+
+
+        </div>
+
+    {% empty %}
+
+        <div class="no-posts">
+
+            <h3>
+                No posts yet.
+            </h3>
+
+            <p>
+                Be the first person to share something!
+            </p>
+
+        </div>
+
+    {% endfor %}
+
+
+</div>
+
+</body>
+</html>

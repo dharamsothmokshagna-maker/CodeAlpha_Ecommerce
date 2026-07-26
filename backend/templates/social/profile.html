@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ profile_user.username }} - Profile</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+        }
+
+        nav {
+            background-color: #1877f2;
+            color: white;
+            padding: 15px 30px;
+        }
+
+        nav h2 {
+            display: inline;
+            margin-right: 30px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-right: 20px;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .profile-container {
+            max-width: 700px;
+            margin: 30px auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-header {
+            text-align: center;
+        }
+
+        .profile-image {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border: 3px solid #1877f2;
+        }
+
+        .default-profile {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background-color: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 50px;
+            color: #777;
+        }
+
+        .profile-header h1 {
+            margin-bottom: 10px;
+        }
+
+        .bio {
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin: 25px 0;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat strong {
+            font-size: 22px;
+        }
+
+        .stat span {
+            color: #666;
+        }
+
+        .button {
+            display: inline-block;
+            background-color: #1877f2;
+            color: white;
+            padding: 10px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 15px;
+            text-decoration: none;
+        }
+
+        .button:hover {
+            background-color: #0d65d9;
+        }
+
+        .edit-button {
+            background-color: #555;
+        }
+
+        .edit-button:hover {
+            background-color: #333;
+        }
+
+        .posts-title {
+            border-top: 1px solid #ddd;
+            padding-top: 25px;
+            margin-top: 30px;
+        }
+
+        .post {
+            border-top: 1px solid #ddd;
+            padding: 20px 0;
+        }
+
+        .post-content {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .post-date {
+            color: #888;
+            font-size: 13px;
+        }
+
+        .no-posts {
+            color: #777;
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+<nav>
+
+    <h2>SocialConnect</h2>
+
+    <a href="/social/">Home</a>
+
+    {% if user.is_authenticated %}
+
+        <a href="/social/profile/{{ user.username }}/">
+            My Profile
+        </a>
+
+        <a href="/social/create-post/">
+            Create Post
+        </a>
+
+        <a href="/social/logout/">
+            Logout
+        </a>
+
+    {% else %}
+
+        <a href="/social/login/">Login</a>
+
+        <a href="/social/register/">Register</a>
+
+    {% endif %}
+
+</nav>
+
+
+<div class="profile-container">
+
+    <div class="profile-header">
+
+        <!-- Profile Image -->
+
+        {% if profile_user.profile.profile_image %}
+
+            <img
+                src="{{ profile_user.profile.profile_image.url }}"
+                alt="Profile Image"
+                class="profile-image"
+            >
+
+        {% else %}
+
+            <div class="default-profile">
+                👤
+            </div>
+
+        {% endif %}
+
+
+        <!-- Username -->
+
+        <h1>@{{ profile_user.username }}</h1>
+
+
+        <!-- Bio -->
+
+        {% if profile_user.profile.bio %}
+
+            <p class="bio">
+                {{ profile_user.profile.bio }}
+            </p>
+
+        {% else %}
+
+            <p class="bio">
+                No bio available.
+            </p>
+
+        {% endif %}
+
+
+        <!-- Followers / Following / Posts -->
+
+        <div class="stats">
+
+            <div class="stat">
+
+                <strong>
+                    {{ posts.count }}
+                </strong>
+
+                <br>
+
+                <span>
+                    Posts
+                </span>
+
+            </div>
+
+
+            <div class="stat">
+
+                <strong>
+                    {{ followers_count }}
+                </strong>
+
+                <br>
+
+                <span>
+                    Followers
+                </span>
+
+            </div>
+
+
+            <div class="stat">
+
+                <strong>
+                    {{ following_count }}
+                </strong>
+
+                <br>
+
+                <span>
+                    Following
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- Edit Profile Button -->
+
+        {% if user.is_authenticated and user == profile_user %}
+
+            <a
+                href="/social/edit-profile/"
+                class="button edit-button"
+            >
+                Edit Profile
+            </a>
+
+        {% endif %}
+
+
+        <!-- Follow / Unfollow Button -->
+
+        {% if user.is_authenticated and user != profile_user %}
+
+            <form
+                method="POST"
+                action="/social/follow/{{ profile_user.username }}/"
+                style="margin-top: 15px;"
+            >
+
+                {% csrf_token %}
+
+                {% if is_following %}
+
+                    <button
+                        type="submit"
+                        class="button"
+                    >
+                        Unfollow
+                    </button>
+
+                {% else %}
+
+                    <button
+                        type="submit"
+                        class="button"
+                    >
+                        Follow
+                    </button>
+
+                {% endif %}
+
+            </form>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- User Posts -->
+
+    <h2 class="posts-title">
+        {{ profile_user.username }}'s Posts
+    </h2>
+
+
+    {% for post in posts %}
+
+        <div class="post">
+
+            <div class="post-content">
+
+                {{ post.content }}
+
+            </div>
+
+            <div class="post-date">
+
+                Posted on {{ post.created_at }}
+
+            </div>
+
+        </div>
+
+    {% empty %}
+
+        <p class="no-posts">
+            This user hasn't created any posts yet.
+        </p>
+
+    {% endfor %}
+
+
+</div>
+
+</body>
+</html>

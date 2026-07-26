@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Create Post - SocialConnect</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+        }
+
+        nav {
+            background-color: #1877f2;
+            color: white;
+            padding: 15px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-right: 20px;
+        }
+
+        .post-box {
+            max-width: 600px;
+            margin: 50px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            box-sizing: border-box;
+            resize: vertical;
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 10px 25px;
+            background-color: #1877f2;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+<nav>
+    <a href="/social/">Home</a>
+    <a href="/social/profile/{{ user.username }}/">My Profile</a>
+    <a href="/social/logout/">Logout</a>
+</nav>
+
+<div class="post-box">
+
+    <h1>Create a Post</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <textarea
+            name="content"
+            placeholder="What's on your mind?"
+            required
+        ></textarea>
+
+        <br>
+
+        <button type="submit">Publish Post</button>
+    </form>
+
+</div>
+
+</body>
+</html>
