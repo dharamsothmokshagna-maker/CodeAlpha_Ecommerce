@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Create Task</title>
+</head>
+
+<body>
+
+    <h1>Create New Task</h1>
+
+    <h2>Project: {{ project.name }}</h2>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <!-- Task Title -->
+        <label for="title">Task Title:</label>
+        <br>
+
+        <input
+            type="text"
+            id="title"
+            name="title"
+            placeholder="Enter task title"
+            required
+        >
+
+        <br><br>
+
+
+        <!-- Task Description -->
+        <label for="description">Description:</label>
+        <br>
+
+        <textarea
+            id="description"
+            name="description"
+            rows="5"
+            placeholder="Enter task description"
+        ></textarea>
+
+        <br><br>
+
+
+        <!-- Assign Task -->
+        <label for="assigned_to">Assign To:</label>
+        <br>
+
+        <select id="assigned_to" name="assigned_to">
+
+            <option value="">
+                -- Select User --
+            </option>
+
+            {% for user in users %}
+
+                <option value="{{ user.id }}">
+                    {{ user.username }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+        <br><br>
+
+
+        <!-- Task Status -->
+        <label for="status">Status:</label>
+        <br>
+
+        <select id="status" name="status">
+
+            <option value="todo">
+                To Do
+            </option>
+
+            <option value="progress">
+                In Progress
+            </option>
+
+            <option value="completed">
+                Completed
+            </option>
+
+        </select>
+
+        <br><br>
+
+
+        <!-- Submit -->
+        <button type="submit">
+            Create Task
+        </button>
+
+    </form>
+
+    <br>
+
+    <a href="{% url 'projectmanager:project_detail' project.id %}">
+        Back to Project
+    </a>
+
+</body>
+</html>

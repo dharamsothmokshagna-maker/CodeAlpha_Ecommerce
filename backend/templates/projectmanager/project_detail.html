@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ project.name }}</title>
+</head>
+
+<body>
+
+    <!-- Project Information -->
+    <h1>{{ project.name }}</h1>
+
+    <p>
+        <strong>Description:</strong>
+        {{ project.description }}
+    </p>
+
+    <p>
+        <strong>Owner:</strong>
+        {{ project.owner.username }}
+    </p>
+
+    <hr>
+
+    <!-- Tasks Section -->
+    <h2>Tasks</h2>
+
+    <a href="{% url 'projectmanager:create_task' project.id %}">
+        + Create Task
+    </a>
+
+    <br><br>
+
+
+    {% for task in project.tasks.all %}
+
+        <div>
+
+            <!-- Task Title -->
+            <h3>{{ task.title }}</h3>
+
+            <!-- Task Description -->
+            <p>
+                <strong>Description:</strong>
+                {{ task.description }}
+            </p>
+
+            <!-- Assigned User -->
+            <p>
+                <strong>Assigned To:</strong>
+
+                {% if task.assigned_to %}
+                    {{ task.assigned_to.username }}
+                {% else %}
+                    Not Assigned
+                {% endif %}
+            </p>
+
+            <!-- Current Status -->
+            <p>
+                <strong>Current Status:</strong>
+                {{ task.get_status_display }}
+            </p>
+
+
+            <!-- Change Task Status -->
+            <form
+                method="POST"
+                action="{% url 'projectmanager:update_task_status' task.id %}"
+            >
+
+                {% csrf_token %}
+
+                <label for="status-{{ task.id }}">
+                    Change Status:
+                </label>
+
+                <select
+                    id="status-{{ task.id }}"
+                    name="status"
+                >
+
+                    <option
+                        value="todo"
+                        {% if task.status == "todo" %}selected{% endif %}
+                    >
+                        To Do
+                    </option>
+
+                    <option
+                        value="progress"
+                        {% if task.status == "progress" %}selected{% endif %}
+                    >
+                        In Progress
+                    </option>
+
+                    <option
+                        value="completed"
+                        {% if task.status == "completed" %}selected{% endif %}
+                    >
+                        Completed
+                    </option>
+
+                </select>
+
+                <button type="submit">
+                    Update Status
+                </button>
+
+            </form>
+
+            <br>
+
+            <!-- View Task Details and Comments -->
+            <a href="{% url 'projectmanager:task_detail' task.id %}">
+                View Task & Comments
+            </a>
+
+        </div>
+
+        <hr>
+
+
+    {% empty %}
+
+        <p>
+            No tasks have been created for this project yet.
+        </p>
+
+    {% endfor %}
+
+
+    <!-- Back to Projects -->
+    <br>
+
+    <a href="{% url 'projectmanager:project_list' %}">
+        ← Back to Projects
+    </a>
+
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ task.title }}</title>
+</head>
+
+<body>
+
+    <h1>{{ task.title }}</h1>
+
+    <p>
+        <strong>Project:</strong>
+        {{ task.project.name }}
+    </p>
+
+    <p>
+        <strong>Description:</strong>
+        {{ task.description }}
+    </p>
+
+    <p>
+        <strong>Assigned To:</strong>
+
+        {% if task.assigned_to %}
+            {{ task.assigned_to.username }}
+        {% else %}
+            Not Assigned
+        {% endif %}
+    </p>
+
+    <p>
+        <strong>Status:</strong>
+        {{ task.get_status_display }}
+    </p>
+
+    <hr>
+
+    <h2>Add Comment</h2>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <textarea
+            name="content"
+            rows="5"
+            cols="50"
+            placeholder="Write your comment..."
+            required
+        ></textarea>
+
+        <br><br>
+
+        <button type="submit">
+            Add Comment
+        </button>
+
+    </form>
+
+    <hr>
+
+    <h2>Comments</h2>
+
+    {% for comment in comments %}
+
+        <div>
+
+            <strong>{{ comment.user.username }}</strong>
+
+            <p>
+                {{ comment.content }}
+            </p>
+
+            <small>
+                {{ comment.created_at }}
+            </small>
+
+        </div>
+
+        <hr>
+
+    {% empty %}
+
+        <p>No comments yet.</p>
+
+    {% endfor %}
+
+    <br>
+
+    <a href="{% url 'projectmanager:project_detail' task.project.id %}">
+        ← Back to Project
+    </a>
+
+</body>
+</html>

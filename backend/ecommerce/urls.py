@@ -27,6 +27,9 @@ urlpatterns = [
 
     # Task 2 - Social Media
     path("social/", include("social.urls")),
+
+    # Task 3
+    path("projects/", include("projectmanager.urls")),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0])
